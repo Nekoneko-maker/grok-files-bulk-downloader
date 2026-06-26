@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name         Grok Files Bulk Downloader
 // @namespace    https://grok.com/
-// @version      0.1.5
+// @version      0.1.6
 // @description  Bulk download images, videos, and other files from grok.com/files with collision-safe filenames.
 // @match        https://grok.com/files*
+// @run-at       document-idle
 // @grant        GM_download
 // @connect      grok.com
 // @connect      assets.grok.com
+// @downloadURL  https://raw.githubusercontent.com/Nekoneko-maker/grok-files-bulk-downloader/main/grok-files-downloader.user.js
+// @updateURL    https://raw.githubusercontent.com/Nekoneko-maker/grok-files-bulk-downloader/main/grok-files-downloader.user.js
 // ==/UserScript==
 
 (() => {
