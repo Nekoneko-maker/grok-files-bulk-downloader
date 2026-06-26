@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Grok Files Bulk Downloader
 // @namespace    https://grok.com/
-// @version      0.1.6
+// @version      0.1.7
 // @description  Bulk download images, videos, and other files from grok.com/files with collision-safe filenames.
 // @match        https://grok.com/files*
 // @run-at       document-idle
@@ -135,6 +135,30 @@
     return `${CONFIG.downloadRootFolder}/${bucket}/${file}`;
   }
 
+
+  function formatFailedAsset(asset) {
+    return {
+      filename: makeFilename(asset),
+      originalName: asset.name || '',
+      mimeType: asset.mimeType || '',
+      assetId: asset.assetId || '',
+      createTime: asset.createTime || '',
+    };
+  }
+
+  function failedAssetsAsText(assets) {
+    const rows = assets.map(formatFailedAsset);
+    return [
+      'filename\toriginalName\tmimeType\tassetId\tcreateTime',
+      ...rows.map((row) => [
+        row.filename,
+        row.originalName,
+        row.mimeType,
+        row.assetId,
+        row.createTime,
+      ].join('\t')),
+    ].join('\n');
+  }
   function isWanted(asset) {
     const bucket = getBucket(asset);
     return (CONFIG.includeImage && bucket === 'images') ||
@@ -284,7 +308,7 @@
       right: 20px;
       bottom: 20px;
       z-index: 999999;
-      width: 320px;
+      width: 380px;
       background: rgba(20,20,20,.96);
       color: #fff;
       border: 1px solid rgba(255,255,255,.15);
@@ -302,6 +326,10 @@
         <button id="gfd-retry" style="padding:8px;border:0;border-radius:10px;cursor:pointer;">失敗分再試行</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button id="gfd-show-failed" style="flex:1;padding:7px;border:0;border-radius:10px;cursor:pointer;">失敗一覧を表示</button>
+        <button id="gfd-copy-failed" style="flex:1;padding:7px;border:0;border-radius:10px;cursor:pointer;">失敗一覧をコピー</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
         <button id="gfd-stop" style="flex:1;padding:7px;border:0;border-radius:10px;cursor:pointer;">停止</button>
         <button id="gfd-force-stop" style="flex:1;padding:7px;border:0;border-radius:10px;cursor:pointer;">強制停止</button>
       </div>
@@ -309,6 +337,7 @@
         <button id="gfd-import" style="flex:1;padding:7px;border:0;border-radius:10px;cursor:pointer;opacity:.9;">既存DLを取り込む</button>
         <button id="gfd-reset" style="flex:1;padding:7px;border:0;border-radius:10px;cursor:pointer;opacity:.85;">履歴リセット</button>
       </div>
+      <pre id="gfd-failed-list" style="display:none;max-height:220px;overflow:auto;margin:10px 0 0;padding:10px;background:rgba(255,255,255,.08);border-radius:10px;white-space:pre-wrap;word-break:break-all;font-size:11px;"></pre>
     `;
 
     document.body.appendChild(panel);
@@ -321,6 +350,9 @@
     const status = panel.querySelector('#gfd-status');
     const start = panel.querySelector('#gfd-start');
     const retry = panel.querySelector('#gfd-retry');
+    const showFailed = panel.querySelector('#gfd-show-failed');
+    const copyFailed = panel.querySelector('#gfd-copy-failed');
+    const failedList = panel.querySelector('#gfd-failed-list');
     const stop = panel.querySelector('#gfd-stop');
     const forceStop = panel.querySelector('#gfd-force-stop');
     const reset = panel.querySelector('#gfd-reset');
@@ -334,6 +366,19 @@
       status.textContent = `完了 ${state.completed} / ${state.items.length} ・再開スキップ ${state.skipped} ・失敗 ${state.failed}`;
     };
 
+    const renderFailedList = () => {
+      failedAssets = loadFailedAssets();
+      if (!failedAssets.length) {
+        failedList.style.display = 'block';
+        failedList.textContent = '失敗したファイルはありません';
+        return;
+      }
+      failedList.style.display = 'block';
+      failedList.textContent = failedAssets.map((asset, index) => {
+        const row = formatFailedAsset(asset);
+        return `${index + 1}. ${row.filename}\n   MIME: ${row.mimeType || '-'}\n   assetId: ${row.assetId || '-'}\n   created: ${row.createTime || '-'}`;
+      }).join('\n\n');
+    };
     start.addEventListener('click', async () => {
       if (state.running) return;
       state.running = true;
@@ -389,6 +434,28 @@
             : `失敗分の再試行が完了しました。成功 ${state.completed} ・失敗 ${state.failed}`);
       } finally {
         state.running = false;
+      }
+    });
+
+    showFailed.addEventListener('click', () => {
+      renderFailedList();
+    });
+
+    copyFailed.addEventListener('click', async () => {
+      failedAssets = loadFailedAssets();
+      if (!failedAssets.length) {
+        updateStatus('コピーする失敗一覧はありません');
+        return;
+      }
+      const text = failedAssetsAsText(failedAssets);
+      try {
+        await navigator.clipboard.writeText(text);
+        updateStatus(`失敗一覧をコピーしました: ${failedAssets.length} 件`);
+      } catch (error) {
+        console.warn('[Grok Files Downloader] clipboard copy failed', error);
+        failedList.style.display = 'block';
+        failedList.textContent = text;
+        updateStatus('自動コピーできないため、一覧を表示しました');
       }
     });
 

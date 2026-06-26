@@ -71,6 +71,8 @@ To change the root folder name, edit `downloadRootFolder` near the top of the sc
 |---|---|
 | `一括DL開始` | Start fetching and downloading all selected asset types |
 | `失敗分再試行` | Retry only files previously recorded as failed |
+| `失敗一覧を表示` | Show filenames, MIME types, asset IDs, and creation times for failed downloads |
+| `失敗一覧をコピー` | Copy failed-download details as tab-separated text |
 | `停止` | Stop starting new work. In-flight downloads continue until they finish or time out |
 | `強制停止` | Stop the UI flow immediately. Intended for resuming later |
 | `既存DLを取り込む` | Import an existing download folder and skip already-downloaded assets later |
@@ -95,7 +97,7 @@ The script reads the asset ID fragment embedded in existing filenames and uses i
 
 A small number of failures can happen during large batch downloads because of temporary network or server issues.
 
-After the main run finishes, click `失敗分再試行` to retry only the files recorded as failed.
+After the main run finishes, click `失敗一覧を表示` to inspect failed filenames. Click `失敗一覧をコピー` to copy the failed list, or `失敗分再試行` to retry only the files recorded as failed.
 
 ## 8. Configuration
 
