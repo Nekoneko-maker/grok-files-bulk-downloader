@@ -8,6 +8,23 @@ Install Tampermonkey in Chrome first.
 
 ## 2. Add the userscript
 
+### Recommended: install from URL
+
+1. Open the Tampermonkey dashboard
+2. Go to `Utilities`
+3. Find `Install from URL`
+4. Paste this URL:
+
+   ```text
+   https://raw.githubusercontent.com/Nekoneko-maker/grok-files-bulk-downloader/main/grok-files-downloader.user.js
+   ```
+
+5. Click install and confirm Tampermonkey's installation screen
+
+### Manual fallback
+
+If URL installation does not work:
+
 1. Open the Tampermonkey dashboard
 2. Choose `Create a new script`
 3. Remove the default code

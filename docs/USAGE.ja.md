@@ -8,6 +8,23 @@ Chrome に Tampermonkey をインストールしてください。
 
 ## 2. スクリプトを登録する
 
+### 推奨: URL からインストール
+
+1. Tampermonkey のダッシュボードを開く
+2. `ユーティリティ` を開く
+3. `URL からインストール` を使う
+4. 次の URL を貼る:
+
+   ```text
+   https://raw.githubusercontent.com/Nekoneko-maker/grok-files-bulk-downloader/main/grok-files-downloader.user.js
+   ```
+
+5. Tampermonkey のインストール確認画面で確定する
+
+### うまくいかない場合: 手動登録
+
+URL インストールが動かない場合は、次の手順で登録してください。
+
 1. Tampermonkey のダッシュボードを開く
 2. `新規スクリプトを作成` を選ぶ
 3. 初期コードをすべて消す

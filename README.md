@@ -31,9 +31,16 @@ grok-files/files/document_2026-04-11_12ab34cd.pdf
 ### Quick start
 
 1. Install Tampermonkey in Chrome
-2. Add `grok-files-downloader.user.js` as a userscript
-3. Open `https://grok.com/files`
-4. Use the `Grok Files Downloader` panel in the lower-right corner
+2. Open the Tampermonkey dashboard
+3. Go to `Utilities` → `Install from URL`
+4. Paste this URL and install:
+
+   ```text
+   https://raw.githubusercontent.com/Nekoneko-maker/grok-files-bulk-downloader/main/grok-files-downloader.user.js
+   ```
+
+5. Open `https://grok.com/files`
+6. Use the `Grok Files Downloader` panel in the lower-right corner
 
 See the full [English usage guide](./docs/USAGE.en.md).
 
@@ -84,9 +91,16 @@ grok-files/files/document_2026-04-11_12ab34cd.pdf
 ### 最短手順
 
 1. Chrome に Tampermonkey を入れる
-2. `grok-files-downloader.user.js` を Tampermonkey に登録する
-3. `https://grok.com/files` を開く
-4. 右下の `Grok Files Downloader` から実行する
+2. Tampermonkey のダッシュボードを開く
+3. `ユーティリティ` → `URL からインストール` を使う
+4. 次の URL を貼ってインストールする:
+
+   ```text
+   https://raw.githubusercontent.com/Nekoneko-maker/grok-files-bulk-downloader/main/grok-files-downloader.user.js
+   ```
+
+5. `https://grok.com/files` を開く
+6. 右下の `Grok Files Downloader` から実行する
 
 詳しくは [日本語の使い方マニュアル](./docs/USAGE.ja.md) を見てください。
 
