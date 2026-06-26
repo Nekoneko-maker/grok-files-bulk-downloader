@@ -29,6 +29,7 @@ Chrome に Tampermonkey をインストールしてください。
 ```text
 grok-files/images/
 grok-files/videos/
+grok-files/files/
 ```
 
 保存名は次の形式です。
@@ -41,6 +42,7 @@ grok-files/videos/
 
 ```text
 grok-files/videos/generated_video_2026-04-11_83405ee7.mp4
+grok-files/files/document_2026-04-11_12ab34cd.pdf
 grok-files/images/imagine_xxx_2026-04-11_a8db689d.jpg
 ```
 
@@ -50,7 +52,7 @@ grok-files/images/imagine_xxx_2026-04-11_a8db689d.jpg
 
 | ボタン | 動作 |
 |---|---|
-| `一括DL開始` | 全件取得とダウンロードを開始 |
+| `一括DL開始` | 選択対象の全件取得とダウンロードを開始 |
 | `失敗分再試行` | 失敗として記録されたファイルだけ再実行 |
 | `停止` | 新しい処理の開始を止める。進行中の数件は完了またはタイムアウトまで待つ |
 | `強制停止` | UI 上の処理を即時停止扱いにする。次回再開前提 |
@@ -91,14 +93,16 @@ const CONFIG = {
   delayBetweenBatchesMs: 250,
   includeImage: true,
   includeVideo: true,
+  includeFile: true,
   downloadRootFolder: 'grok-files',
 };
 ```
 
 よく使う変更:
 
-- 動画だけ落としたい: `includeImage: false`
-- 画像だけ落としたい: `includeVideo: false`
+- 動画だけ落としたい: `includeImage: false`、`includeFile: false`
+- 画像だけ落としたい: `includeVideo: false`、`includeFile: false`
+- その他ファイルだけ落としたい: `includeImage: false`、`includeVideo: false`
 - 大量件数で慎重に動かしたい: `concurrency: 1` または `2`
 - 保存フォルダ名を変えたい: `downloadRootFolder`
 

@@ -29,6 +29,7 @@ By default, files are saved under Chrome's normal download directory:
 ```text
 grok-files/images/
 grok-files/videos/
+grok-files/files/
 ```
 
 Filenames use this format:
@@ -41,6 +42,7 @@ Examples:
 
 ```text
 grok-files/videos/generated_video_2026-04-11_83405ee7.mp4
+grok-files/files/document_2026-04-11_12ab34cd.pdf
 grok-files/images/imagine_xxx_2026-04-11_a8db689d.jpg
 ```
 
@@ -50,7 +52,7 @@ To change the root folder name, edit `downloadRootFolder` near the top of the sc
 
 | Button | Behavior |
 |---|---|
-| `一括DL開始` | Start fetching and downloading all files |
+| `一括DL開始` | Start fetching and downloading all selected asset types |
 | `失敗分再試行` | Retry only files previously recorded as failed |
 | `停止` | Stop starting new work. In-flight downloads continue until they finish or time out |
 | `強制停止` | Stop the UI flow immediately. Intended for resuming later |
@@ -91,14 +93,16 @@ const CONFIG = {
   delayBetweenBatchesMs: 250,
   includeImage: true,
   includeVideo: true,
+  includeFile: true,
   downloadRootFolder: 'grok-files',
 };
 ```
 
 Common changes:
 
-- Videos only: `includeImage: false`
-- Images only: `includeVideo: false`
+- Videos only: `includeImage: false` and `includeFile: false`
+- Images only: `includeVideo: false` and `includeFile: false`
+- Other files only: `includeImage: false` and `includeVideo: false`
 - More cautious behavior for very large libraries: set `concurrency` to `1` or `2`
 - Different output folder name: edit `downloadRootFolder`
 

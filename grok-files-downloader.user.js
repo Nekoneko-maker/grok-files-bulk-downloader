@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Grok Files Bulk Downloader
 // @namespace    https://grok.com/
-// @version      0.1.4
-// @description  Bulk download images and videos from grok.com/files with collision-safe filenames.
+// @version      0.1.5
+// @description  Bulk download images, videos, and other files from grok.com/files with collision-safe filenames.
 // @match        https://grok.com/files*
 // @grant        GM_download
 // @connect      grok.com
@@ -20,6 +20,7 @@
     delayBetweenBatchesMs: 250,
     includeImage: true,
     includeVideo: true,
+    includeFile: true,
     downloadRootFolder: 'grok-files',
   };
 
@@ -115,19 +116,27 @@
     return { base: safe, ext: fallbackExt };
   }
 
+  function getBucket(asset) {
+    const mime = asset.mimeType || '';
+    if (mime.startsWith('image/')) return 'images';
+    if (mime.startsWith('video/')) return 'videos';
+    return 'files';
+  }
+
   function makeFilename(asset) {
     const { base, ext } = splitName(asset.name, asset.mimeType);
     const date = formatDate(asset.createTime);
     const id = String(asset.assetId || '').slice(0, 8) || 'noid';
-    const bucket = asset.mimeType?.startsWith('video/') ? 'videos' : 'images';
+    const bucket = getBucket(asset);
     const file = `${base}_${date}_${id}.${ext}`;
     return `${CONFIG.downloadRootFolder}/${bucket}/${file}`;
   }
 
   function isWanted(asset) {
-    const mime = asset.mimeType || '';
-    return (CONFIG.includeImage && mime.startsWith('image/')) ||
-      (CONFIG.includeVideo && mime.startsWith('video/'));
+    const bucket = getBucket(asset);
+    return (CONFIG.includeImage && bucket === 'images') ||
+      (CONFIG.includeVideo && bucket === 'videos') ||
+      (CONFIG.includeFile && bucket === 'files');
   }
 
   async function fetchAssetsPage(pageToken) {
