@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Grok Files Bulk Downloader
 // @namespace    https://grok.com/
-// @version      0.1.7
+// @version      0.1.8
 // @description  Bulk download images, videos, and other files from grok.com/files with collision-safe filenames.
 // @match        https://grok.com/files*
 // @run-at       document-idle
@@ -368,17 +368,27 @@
 
     const renderFailedList = () => {
       failedAssets = loadFailedAssets();
+      failedList.style.display = 'block';
+      showFailed.textContent = '失敗一覧を閉じる';
       if (!failedAssets.length) {
-        failedList.style.display = 'block';
         failedList.textContent = '失敗したファイルはありません';
         return;
       }
-      failedList.style.display = 'block';
       failedList.textContent = failedAssets.map((asset, index) => {
         const row = formatFailedAsset(asset);
         return `${index + 1}. ${row.filename}\n   MIME: ${row.mimeType || '-'}\n   assetId: ${row.assetId || '-'}\n   created: ${row.createTime || '-'}`;
       }).join('\n\n');
     };
+
+    const toggleFailedList = () => {
+      if (failedList.style.display === 'block') {
+        failedList.style.display = 'none';
+        showFailed.textContent = '失敗一覧を表示';
+        return;
+      }
+      renderFailedList();
+    };
+
     start.addEventListener('click', async () => {
       if (state.running) return;
       state.running = true;
@@ -438,7 +448,7 @@
     });
 
     showFailed.addEventListener('click', () => {
-      renderFailedList();
+      toggleFailedList();
     });
 
     copyFailed.addEventListener('click', async () => {
@@ -454,6 +464,7 @@
       } catch (error) {
         console.warn('[Grok Files Downloader] clipboard copy failed', error);
         failedList.style.display = 'block';
+        showFailed.textContent = '失敗一覧を閉じる';
         failedList.textContent = text;
         updateStatus('自動コピーできないため、一覧を表示しました');
       }
